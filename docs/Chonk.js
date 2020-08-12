@@ -16,6 +16,8 @@ class Chonk{
     this.Gronk = createArray(chonkx,chonky,chonkz);
     this.monkinfo = createArray(chonkx - 1,chonky - 1,chonkz - 1);
     this.dispscale = dispscale;
+    
+    this.geometry = new p5.Geometry(1);
   }
 
   initializeSeed(seed, smoothness){ //larger smoothness -> more smooth gradients
@@ -121,6 +123,7 @@ class Chonk{
         }
       }
     }
+    this.geometryInit();
   }
 
   displayMesh(){
@@ -209,6 +212,121 @@ class Chonk{
     }
     endShape();
     pop();
+  }
+  
+  geometryInit(){
+    this.geometry.vertices = [];
+    this.geometry.vertexNormals = [];
+    this.geometry.uvs = [];
+    
+    let faces = [];
+    let tricounter = 0;
+    let triface = [];
+    for(let x = 0; x < this.chonkx-1; x++){
+      for(let y = 0; y < this.chonky-1; y++){
+        for(let z = 0; z < this.chonkz-1; z++){
+          let thisline = lines[this.monkinfo[x][y][z]];
+          
+          let nums = split(thisline, ", ");
+          nums.forEach(thisnum => {
+            let edge = int(thisnum);
+            let faralong;
+            if(edge != -1){
+              let addvert;
+              switch(edge){
+                case 0: 
+                faralong = map(this.thresh,this.Gronk[x][y][z],this.Gronk[x+1][y][z],0,1);
+                addvert = new p5.Vector(this.offx + x + faralong, this.offy + y, this.offz + z); 
+                break; 
+                
+                case 1: 
+                faralong = map(this.thresh,this.Gronk[x+1][y][z],this.Gronk[x+1][y+1][z],0,1);
+                addvert = new p5.Vector(this.offx + x + 1, this.offy + y + faralong, this.offz + z); 
+                break;
+                
+                case 2:  
+                faralong = map(this.thresh,this.Gronk[x][y+1][z],this.Gronk[x+1][y+1][z],0,1);
+                addvert = new p5.Vector(this.offx + x + faralong, this.offy + y + 1, this.offz + z); 
+                break;
+                
+                case 3:  
+                faralong = map(this.thresh,this.Gronk[x][y][z],this.Gronk[x][y+1][z],0,1);
+                addvert = new p5.Vector(this.offx + x, this.offy + y + faralong, this.offz + z); 
+                break;
+                
+                case 4:  
+                faralong = map(this.thresh,this.Gronk[x][y][z+1],this.Gronk[x+1][y][z+1],0,1);
+                addvert = new p5.Vector(this.offx + x + faralong, this.offy + y, this.offz + z + 1); 
+                break;
+                
+                case 5:   
+                faralong = map(this.thresh,this.Gronk[x+1][y][z+1],this.Gronk[x+1][y+1][z+1],0,1);
+                addvert = new p5.Vector(this.offx + x + 1, this.offy + y + faralong, this.offz + z + 1); 
+                break;
+                
+                case 6:   
+                faralong = map(this.thresh,this.Gronk[x][y+1][z+1],this.Gronk[x+1][y+1][z+1],0,1);
+                addvert = new p5.Vector(this.offx + x + faralong, this.offy + y + 1, this.offz + z + 1); 
+                break;
+                
+                case 7:   
+                faralong = map(this.thresh,this.Gronk[x][y][z+1],this.Gronk[x][y+1][z+1],0,1);
+                addvert = new p5.Vector(this.offx + x, this.offy + y + faralong, this.offz + z + 1); 
+                break;
+                
+                case 8:   
+                faralong = map(this.thresh,this.Gronk[x][y][z],this.Gronk[x][y][z+1],0,1);
+                addvert = new p5.Vector(this.offx + x, this.offy + y, this.offz + z + faralong); 
+                break;
+                
+                case 9:   
+                faralong = map(this.thresh,this.Gronk[x+1][y][z],this.Gronk[x+1][y][z+1],0,1);
+                addvert = new p5.Vector(this.offx + x + 1, this.offy + y, this.offz + z + faralong); 
+                break;
+                
+                case 10:   
+                faralong = map(this.thresh,this.Gronk[x+1][y+1][z],this.Gronk[x+1][y+1][z+1],0,1);
+                addvert = new p5.Vector(this.offx + x + 1, this.offy + y + 1, this.offz + z + faralong); 
+                break;
+                
+                case 11:   
+                faralong = map(this.thresh,this.Gronk[x][y+1][z],this.Gronk[x][y+1][z+1],0,1);
+                addvert = new p5.Vector(this.offx + x, this.offy + y + 1, this.offz + z + faralong); 
+                break;
+                
+                default: 
+                console.log("HUH?" + edge); 
+                break;
+              }
+              this.addVertex(addvert);
+              triface.push(tricounter);
+              if(triface.length === 3){
+                faces.push(triface);
+                triface = [];
+              }
+              tricounter++;
+            }
+          });
+        }
+      }
+    }
+    this.geometry.faces = faces;
+    this.geometry.computeNormals();
+  }
+  
+  addVertex(p){
+    this.geometry.vertices.push(p);
+    this.geometry.vertexNormals.push(p);
+
+    this.geometry.uvs.push([
+      ((Math.atan2(p.x, p.z) / Math.PI + 1) / 2) % 1,
+      Math.acos(-p.y) / Math.PI
+    ]);
+  }
+  
+  geometryDisp(thisrenderer, s){
+    thisrenderer.createBuffers("!", this.geometry);
+    thisrenderer.drawBuffersScaled("!", s, s, s);
   }
 
   decreaseThresh(){
@@ -407,11 +525,12 @@ function prepChonks(){
   }
 }
 
-function marchProcessChonks(){
+async function marchProcessChonks(){
   ProcessChonks.forEach(lChonk => {
     lChonk.initialize(smoothness, terraintype);
     lChonk.setThresh(threshhold);
     lChonk.march();
+    //lChonk.geometryInit();
   });
   loadReady = true;
 }
