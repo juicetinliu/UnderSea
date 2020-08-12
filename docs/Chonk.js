@@ -318,10 +318,7 @@ class Chonk{
     this.geometry.vertices.push(p);
     this.geometry.vertexNormals.push(p);
 
-    this.geometry.uvs.push([
-      ((Math.atan2(p.x, p.z) / Math.PI + 1) / 2) % 1,
-      Math.acos(-p.y) / Math.PI
-    ]);
+    this.geometry.uvs.push([1,1]);
   }
   
   geometryDisp(thisrenderer, s){

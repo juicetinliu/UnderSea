@@ -19,23 +19,18 @@ function hud(){
     
     fill(255);
     textSize(10);
-    textAlign(LEFT); //left hud
-    text(1000/deltaTime, 10,10);
-    //if(toggleDebug){
-    text(playerx, 40, 30);
-    text(playery, 40, 45);
-    text(playerz, 40, 60);
-    text(threshhold, 40, 90);
-    //if(toggledisplay){
-    //  text("CUBES",40,90);
-    //}else{
-    //  text("MESH",40,90);
-    //}
+    textAlign(LEFT);
+    text(nfc(1000/deltaTime,2), 10,10);
+
+    text(nfc(playerx,2), 20, 30);
+    text(nfc(playery,2), 20, 45);
+    text(nfc(playerz,2), 20, 60);
     
-    if(currChonk !== null){
-      text(currChonk.offx + "," + currChonk.offy + "," + currChonk.offz,40,75);
-    }
     if(toggleDebug){
+      text(threshhold, 40, 90);
+      if(currChonk !== null){
+        text(currChonk.offx + "," + currChonk.offy + "," + currChonk.offz,40,75);
+      }
       text(LoadedChonks.length + ":" + ProcessChonks.length + ":" + UnLoadedChonks.length + ":" + ProcessBufChonks.length ,width/2,30);
       text(LoadedChonks.length + ProcessChonks.length + UnLoadedChonks.length + ProcessBufChonks.length,width/2,45);
     }
@@ -47,12 +42,11 @@ function hud(){
     }else if(lightmode === 2){
       text("HIGH",width/2, 15);
     }
-    //text(currChonk.disttochonkcenterLin(playerx,playery,playerz), width/2, 90);
     
     fill(255);
     textSize(12);
     textAlign(CENTER);
-    text("Space for Forward/Shift for Backward/L for Lights",width/2,height-15);
+    text("Space - Forward | Shift - Backward | L - Lights",width/2,height-15);
     if(toggleDebug){
       text("Q/E for Threshold",width/2,height-30);
     }
@@ -60,20 +54,21 @@ function hud(){
     fill(255);
     textSize(12);
     textAlign(RIGHT);
-    //if(toggleDebug){
-    text("X:",40,30);
-    text("Y:",40,45);
-    text("Z:",40,60);
-    text("CHK:",40,75);
-    text("THR:",40,90);
+
+    text("X:",20,30);
+    text("Y:",20,45);
+    text("Z:",20,60);
+    
     
     if(toggleDebug){
+      text("CHK:",40,75);
+      text("THR:",40,90);
       text("Chunk Distribution(L:P:U:B): ",width/2,30);
       text("Total Chunks in Memory: ",width/2,45);
     }
     
     text("LIGHTS: ",width/2, 15);
-    //text("DIS:",40,90);
+
     pop();
     // prepare to return to 3D 
     gl.enable(gl.DEPTH_TEST);
