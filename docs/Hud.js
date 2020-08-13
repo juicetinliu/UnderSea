@@ -18,14 +18,14 @@ function hud(){
     }
     
     fill(255);
-    textSize(10);
+    textSize(12);
     textAlign(LEFT);
     let fps = frameRate();
-    text(fps.toFixed(2), 10,10);
+    text("FPS: " + fps.toFixed(2), 10,10);
 
-    text(nfc(playerx,2), 20, 30);
-    text(nfc(playery,2), 20, 45);
-    text(nfc(playerz,2), 20, 60);
+    text("X: " + nfc(playerx,2), 10, 30);
+    text("Y: " + nfc(playery,2), 10, 45);
+    text("Z: " + nfc(playerz,2), 10, 60);
     
     if(toggleDebug){
       text(threshhold, 40, 90);
@@ -36,7 +36,7 @@ function hud(){
       text(LoadedChonks.length + ProcessChonks.length + UnLoadedChonks.length + ProcessBufChonks.length,width/2,45);
     }
     
-    textSize(12);
+    // textSize(12);
     if(lightmode === 0){
       fill(255,0,0);
       text("OFF",width/2, 15);
@@ -47,7 +47,7 @@ function hud(){
     }
     
     fill(255);
-    textSize(12);
+    // textSize(12);
     textAlign(CENTER);
     text("Space - Forward | Shift - Backward | L - Lights",width/2,height-15);
 
@@ -60,12 +60,12 @@ function hud(){
     }
     
     fill(255);
-    textSize(12);
+    // textSize(12);
     textAlign(RIGHT);
 
-    text("X:",20,30);
-    text("Y:",20,45);
-    text("Z:",20,60);
+    // text("X:",20,30);
+    // text("Y:",20,45);
+    // text("Z:",20,60);
     
     
     if(toggleDebug){
