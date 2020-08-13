@@ -20,7 +20,8 @@ function hud(){
     fill(255);
     textSize(10);
     textAlign(LEFT);
-    text(nfc(1000/deltaTime,2), 10,10);
+    let fps = frameRate();
+    text(fps.toFixed(2), 10,10);
 
     text(nfc(playerx,2), 20, 30);
     text(nfc(playery,2), 20, 45);
