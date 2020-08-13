@@ -27,15 +27,15 @@ function moveCamera(speed){
   playervx += accel*playerView.x;
   playervy += accel*playerView.y;
   playervz += accel*playerView.z;
-  playervx = constrain(playervx,-speed,speed);
-  playervy = constrain(playervy,-speed,speed);
-  playervz = constrain(playervz,-speed,speed);
+  playervx = Math.min(Math.max(playervx,-speed),speed);
+  playervy = Math.min(Math.max(playervy,-speed),speed);
+  playervz = Math.min(Math.max(playervz,-speed),speed);
   
-  accel = (abs(accel) > 0.0001)? lerp(accel,0,0.5) : 0;
+  accel = (Math.abs(accel) > 0.0001)? lerp(accel,0,0.5) : 0;
   
-  playervx = (abs(playervx) > 0.0001)? lerp(playervx,0,0.02) : 0;
-  playervy = (abs(playervy) > 0.0001)? lerp(playervy,0,0.02) : 0;
-  playervz = (abs(playervz) > 0.0001)? lerp(playervz,0,0.02) : 0;
+  playervx = (Math.abs(playervx) > 0.0001)? lerp(playervx,0,0.02) : 0;
+  playervy = (Math.abs(playervy) > 0.0001)? lerp(playervy,0,0.02) : 0;
+  playervz = (Math.abs(playervz) > 0.0001)? lerp(playervz,0,0.02) : 0;
   
   playerz += playervz;
   playerx += playervx;
@@ -48,14 +48,14 @@ function moveCamera(speed){
   playerroty = map(deltx, 0, width, 0, 2*PI);
   playerrotxz = map(delty, 0, height, PI-0.0001, 0);
 
-  camera(dispscale*playerx, dispscale*playery, dispscale*playerz, dispscale*(playerx+10*cos(playerroty)*sin(playerrotxz)), dispscale*(playery+10*cos(playerrotxz)), dispscale*(playerz+10*sin(playerroty)*sin(playerrotxz)), 0,1,0);
+  camera(dispscale*playerx, dispscale*playery, dispscale*playerz, dispscale*(playerx+10*Math.cos(playerroty)*Math.sin(playerrotxz)), dispscale*(playery+10*Math.cos(playerrotxz)), dispscale*(playerz+10*Math.sin(playerroty)*Math.sin(playerrotxz)), 0,1,0);
   
-  playerView.set(50*cos(playerroty)*sin(playerrotxz), 50*cos(playerrotxz), 50*sin(playerroty)*sin(playerrotxz));
+  playerView.set(50*Math.cos(playerroty)*Math.sin(playerrotxz), 50*Math.cos(playerrotxz), 50*Math.sin(playerroty)*Math.sin(playerrotxz));
 }
 
 function otherControls(){
   if(decthresh){
-    threshhold = max(threshhold-threshAmount,0);
+    threshhold = Math.max(threshhold-threshAmount,0);
     LoadedChonks.forEach(thisChonk => {
       thisChonk.setThresh(threshhold);
     });
@@ -67,7 +67,7 @@ function otherControls(){
     });
   }
   if(incthresh){
-    threshhold = min(threshhold+threshAmount,1.0);
+    threshhold = Math.min(threshhold+threshAmount,1.0);
     LoadedChonks.forEach(thisChonk => {
       thisChonk.setThresh(threshhold);
     });
@@ -83,7 +83,7 @@ function otherControls(){
 function mousemovement(){
   deltx = (deltx + movedX) % width;
   deltx = (deltx > 0) ? deltx : deltx + width;
-  delty = constrain(delty + movedY, 0, height-1);
+  delty = Math.min(Math.max(delty + movedY, 0), height-1);
 }
 
 function keyPressed(){

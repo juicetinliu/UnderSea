@@ -327,12 +327,12 @@ class Chonk{
   }
 
   decreaseThresh(){
-    this.thresh = max(0,this.thresh - this.threshAmount);
+    this.thresh = Math.max(0,this.thresh - this.threshAmount);
     this.march();
   }
   
   increaseThresh(){
-    this.thresh = min(1.0,this.thresh + this.threshAmount);
+    this.thresh = Math.min(1.0,this.thresh + this.threshAmount);
     this.march();
   }
   
@@ -345,7 +345,7 @@ class Chonk{
     let ix = int(x);
     let iy = int(y);
     let iz = int(z);
-    this.Gronk[ix][iy][iz] = min(1.0, this.Gronk[ix][iy][iz] + amount);
+    this.Gronk[ix][iy][iz] = Math.min(1.0, this.Gronk[ix][iy][iz] + amount);
     this.march();
   }
 
@@ -353,7 +353,7 @@ class Chonk{
     let ix = int(x);
     let iy = int(y);
     let iz = int(z);
-    this.Gronk[ix][iy][iz] = max(0, this.Gronk[ix][iy][iz] - amount);
+    this.Gronk[ix][iy][iz] = Math.max(0, this.Gronk[ix][iy][iz] - amount);
     this.march();
   }
 

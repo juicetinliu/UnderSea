@@ -124,5 +124,5 @@ function draw() {
 }
 
 function bgColorChange(){
-  return color(min(20,max(1,map(playery,0,50,20,1))), min(90,max(1,map(playery,0,50,90,1))), min(150,max(5,map(playery,0,50,150,1))));
+  return color(Math.min(20,Math.max(1,map(playery,0,50,20,1))), Math.min(90,Math.max(1,map(playery,0,50,90,1))), Math.min(150,Math.max(5,map(playery,0,50,150,1))));
 }

@@ -14,7 +14,7 @@ function hud(){
     ellipse(width/2, height/2, 10, 10);
     
     if(toggleDebug){
-      rect(deltx, delty, 10, 10);
+      rect(deltx-5, delty-5, 10, 10);
     }
     
     fill(255);
@@ -35,7 +35,9 @@ function hud(){
       text(LoadedChonks.length + ProcessChonks.length + UnLoadedChonks.length + ProcessBufChonks.length,width/2,45);
     }
     
+    textSize(12);
     if(lightmode === 0){
+      fill(255,0,0);
       text("OFF",width/2, 15);
     }else if(lightmode === 1){
       text("LOW",width/2, 15);
@@ -47,8 +49,13 @@ function hud(){
     textSize(12);
     textAlign(CENTER);
     text("Space - Forward | Shift - Backward | L - Lights",width/2,height-15);
+
     if(toggleDebug){
       text("Q/E for Threshold",width/2,height-30);
+    }
+
+    if(!locked){
+      text("Click to enter", width/2, height/2+20)
     }
     
     fill(255);
