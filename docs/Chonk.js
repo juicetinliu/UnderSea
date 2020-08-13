@@ -46,7 +46,7 @@ class Chonk{
   displayBounding(){
     push();
     noFill();
-    stroke(0);
+    stroke(255);
     strokeWeight(1);
     scale(this.dispscale);
     translate(this.offx+(this.chonkx-1)/2,this.offy+(this.chonky-1)/2,this.offz+(this.chonkz-1)/2);
