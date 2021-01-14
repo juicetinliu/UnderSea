@@ -1,4 +1,6 @@
 # UnderSea
+
+An underwater experience inspired by [Sebastian Lague](https://www.youtube.com/watch?v=M3iI2l0ltbE).
  
 Open this [demo](https://juicetinliu.github.io/UnderSea) in your browser!
 
