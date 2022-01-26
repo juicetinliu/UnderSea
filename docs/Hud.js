@@ -12,6 +12,10 @@ function hud(){
     //line(width/2-5, height/2, width/2+5, height/2);
     //line(width/2, height/2-5, width/2, height/2+5);
     ellipse(width/2, height/2, 10, 10);
+    //TODO: HUD FILL COLOR BUG DUE TO SHADER SHADING EVERYTHING
+    if(document.isMobileOrTabletView){
+      controlStick.draw();
+    }
     
     if(toggleDebug){
       rect(deltx-5, delty-5, 10, 10);
@@ -22,60 +26,57 @@ function hud(){
     textAlign(LEFT);
     let fps = frameRate();
     text("FPS: " + fps.toFixed(2), 10,10);
-
-    text("X: " + nfc(playerx,2), 10, 30);
-    text("Y: " + nfc(playery,2), 10, 45);
-    text("Z: " + nfc(playerz,2), 10, 60);
     
-    if(toggleDebug){
-      text(threshhold, 40, 90);
-      if(currChonk !== null){
-        text(currChonk.offx + "," + currChonk.offy + "," + currChonk.offz,40,75);
+    if(!document.isMobileOrTabletView){
+      text("X: " + nfc(playerx,2), 10, 30);
+      text("Y: " + nfc(playery,2), 10, 45);
+      text("Z: " + nfc(playerz,2), 10, 60);
+      
+      if(toggleDebug){
+        text(threshhold, 40, 90);
+        if(currChonk !== null){
+          text(currChonk.offx + "," + currChonk.offy + "," + currChonk.offz,40,75);
+        }
+        text(LoadedChonks.length + ":" + ProcessChonks.length + ":" + UnLoadedChonks.length + ":" + ProcessBufChonks.length ,width/2,30);
+        text(LoadedChonks.length + ProcessChonks.length + UnLoadedChonks.length + ProcessBufChonks.length,width/2,45);
       }
-      text(LoadedChonks.length + ":" + ProcessChonks.length + ":" + UnLoadedChonks.length + ":" + ProcessBufChonks.length ,width/2,30);
-      text(LoadedChonks.length + ProcessChonks.length + UnLoadedChonks.length + ProcessBufChonks.length,width/2,45);
-    }
-    
-    // textSize(12);
-    if(lightmode === 0){
-      fill(255,0,0);
-      text("OFF",width/2, 15);
-    }else if(lightmode === 1){
-      text("LOW",width/2, 15);
-    }else if(lightmode === 2){
-      text("HIGH",width/2, 15);
-    }
-    
-    fill(255);
-    // textSize(12);
-    textAlign(CENTER);
-    text("Space - Forward | Shift - Backward | L - Lights",width/2,height-15);
+      
+      // textSize(12);
+      if(lightmode === 0){
+        fill(255,0,0);
+        text("OFF",width/2, 15);
+      }else if(lightmode === 1){
+        text("LOW",width/2, 15);
+      }else if(lightmode === 2){
+        text("HIGH",width/2, 15);
+      }
+      
+      fill(255);
+      // textSize(12);
+      textAlign(CENTER);
+      text("Space - Forward | Shift - Backward | L - Lights",width/2,height-15);
 
-    if(toggleDebug){
-      text("Q/E for Threshold",width/2,height-30);
-    }
+      if(toggleDebug){
+        text("Q/E for Threshold",width/2,height-30);
+      }
 
-    if(!locked){
-      text("Click to enter", width/2, height/2+20)
+      if(!locked){
+        text("Click to enter", width/2, height/2+20)
+      }
+      
+      fill(255);
+      // textSize(12);
+      textAlign(RIGHT);
+      
+      if(toggleDebug){
+        text("CHK:",40,75);
+        text("THR:",40,90);
+        text("Chunk Distribution(L:P:U:B): ",width/2,30);
+        text("Total Chunks in Memory: ",width/2,45);
+      }
+      
+      text("LIGHTS: ",width/2, 15);
     }
-    
-    fill(255);
-    // textSize(12);
-    textAlign(RIGHT);
-
-    // text("X:",20,30);
-    // text("Y:",20,45);
-    // text("Z:",20,60);
-    
-    
-    if(toggleDebug){
-      text("CHK:",40,75);
-      text("THR:",40,90);
-      text("Chunk Distribution(L:P:U:B): ",width/2,30);
-      text("Total Chunks in Memory: ",width/2,45);
-    }
-    
-    text("LIGHTS: ",width/2, 15);
 
     pop();
     // prepare to return to 3D 

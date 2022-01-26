@@ -24,6 +24,8 @@ let loadReady = true, startLoad = false;
 let currChonk;
 let toggleDebug = false;
 
+let controlStick;
+
 function preload() {
   lines = loadStrings('lines.txt');
   
@@ -76,7 +78,9 @@ function setup() {
   lightShader.setUniform("fogNear", 0.0);
   lightShader.setUniform("fogFar", dispscale*viewDistance);
   lightShader.setUniform("fogColor",  [map(red(BgColor),0,255,0,1.0),map(green(BgColor),0,255,0,1.0),map(blue(BgColor),0,255,0,1.0)]);
-  
+
+  controlStick = new Joystick(width-100, height-100, 50, 20);
+
   frameRate(60);
   console.log("Setup Complete");
 }

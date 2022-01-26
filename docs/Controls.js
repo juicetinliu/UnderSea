@@ -41,10 +41,17 @@ function moveCamera(speed){
   playerx += playervx;
   playery += playervy;
   
-  
-  if(locked){
-    mousemovement();
+  if(document.isMobileOrTabletView){
+    let controlStickVal = controlStick.interact();
+    deltx = (deltx + controlStickVal.x * width/200) % width;
+    console.log(height)
+    delty = Math.min(Math.max(delty + controlStickVal.y * height/200, 0), height);
+  }else{
+    if(locked){
+      mousemovement();
+    }
   }
+
   playerroty = map(deltx, 0, width, 0, 2*PI);
   playerrotxz = map(delty, 0, height, PI-0.0001, 0);
 
@@ -143,11 +150,86 @@ function setMove(k, b){
 }
 
 function mouseClicked() {
-  if (!locked) {
-    locked = true;
-    requestPointerLock();
-  } else {
-    exitPointerLock();
-    locked = false;
+  if(!document.isMobileOrTabletView){
+    if (!locked) {
+      locked = true;
+      requestPointerLock();
+    } else {
+      exitPointerLock();
+      locked = false;
+    }
+  }
+}
+
+class Joystick {
+  constructor(x, y, rad, buttonrad){
+      this.x = x;
+      this.y = y;
+      this.rad = rad;
+      this.buttonrad = buttonrad;
+      this.joyState = 0;
+      this.buttonx = 0;
+      this.buttony = 0;
+      this.raddiff = this.rad - this.buttonrad;
+  }
+
+  draw(){
+      stroke(255);
+      strokeWeight(2);
+      ellipse(this.x, this.y, this.rad * 2, this.rad * 2);
+      ellipse(this.x + this.buttonx, this.y + this.buttony, this.buttonrad * 2, this.buttonrad * 2);
+
+      fill(255);
+      textAlign(CENTER);
+      if(!document.hasUsedJoystickBefore) text("Move around with the joystick", this.x, this.y - this.rad - 10);
+  }
+
+  interact(){
+    this.resetJoyStateWhenLetGo();
+    switch(this.joyState){
+      case 0:
+        if(mouseIsPressed){
+          if((mouseX - this.x) ** 2 + (mouseY - this.y) ** 2 < this.rad ** 2){
+            this.joyState = 1;
+          }
+        }
+        break;
+      case 1: //joystickMode
+          if(!document.hasUsedJoystickBefore) document.hasUsedJoystickBefore = true;
+          if((mouseX - this.x) ** 2 + (mouseY - this.y) ** 2 < this.raddiff ** 2){
+            this.buttonx = mouseX - this.x;
+            this.buttony = mouseY - this.y;
+          }else{
+            let ang = atan2(mouseY - this.y, mouseX - this.x);
+            this.buttonx = this.raddiff * cos(ang);
+            this.buttony = this.raddiff * sin(ang);
+          }
+        break;
+      default:
+        break;
+    }
+    let outX = map(this.buttonx, -this.raddiff, this.raddiff, -1, 1);
+    let outY = map(this.buttony, -this.raddiff, this.raddiff, -1, 1)
+    return {x: outX, y: outY};
+  }
+
+  resetJoyStateWhenLetGo(){
+    if(!mouseIsPressed){
+      this.joyState = 0;
+      this.buttonx = 0;
+      this.buttony = 0;
+    }
+  }
+}
+
+function mouseClicked() {
+  if(!document.isMobileOrTabletView){
+    if (!locked) {
+      locked = true;
+      requestPointerLock();
+    } else {
+      exitPointerLock();
+      locked = false;
+    }
   }
 }
