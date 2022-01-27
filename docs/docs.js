@@ -2,7 +2,6 @@ let lightShader, normalShader;
 
 let renderer, gl;
 let BgColor;
-let playerView;
 let viewDistance, nearDistance, viewAng;
 let lines = [];
 
@@ -24,7 +23,7 @@ let loadReady = true, startLoad = false;
 let currChonk;
 let toggleDebug = false;
 
-let controlStick;
+let player;
 
 function preload() {
   lines = loadStrings('lines.txt');
@@ -54,15 +53,16 @@ function setup() {
   playerx = startingx + ChonkSpacing/2;
   playery = startingy + ChonkSpacing/2;
   playerz = startingz + ChonkSpacing/2;
-  playerrotxz = 0;
-  playerroty = 0;
+
+  let joystickControl = new Joystick(width-100, height-100, 50, 20);
+  let mouseControl = new Mouse();
+  let keyControl = new KeyBoard();
+
+  player = new Player(playerx, playery, playerz, 0, 0, 0, 0, 0, keyControl, document.isMobileOrTabletView ? joystickControl : mouseControl);
   
   viewDistance = 4*ChonkSpacing;
   viewAng = radians(90);
   nearDistance = 1*ChonkSpacing;
-  
-  deltx = width/2;
-  delty = height/2;
   
   LoadedChonks.push(new Chonk(chonkx, chonky, chonkz, threshhold, startingx, startingy, startingz, dispscale));
   noiseSeed(3);
@@ -70,16 +70,14 @@ function setup() {
     thisChonk.initialize(smoothness, terraintype);
     thisChonk.march();
   });
+
   let fov = PI/3.0;
-  
   perspective(fov, float(width)/float(height), dispscale/100, 5000);
   
   shader(lightShader);
   lightShader.setUniform("fogNear", 0.0);
   lightShader.setUniform("fogFar", dispscale*viewDistance);
   lightShader.setUniform("fogColor",  [map(red(BgColor),0,255,0,1.0),map(green(BgColor),0,255,0,1.0),map(blue(BgColor),0,255,0,1.0)]);
-
-  controlStick = new Joystick(width-100, height-100, 50, 20);
 
   frameRate(60);
   console.log("Setup Complete");
@@ -88,24 +86,26 @@ function setup() {
 function draw() {
   BgColor = bgColorChange();
   background(BgColor);
-  
+
   lightShader.setUniform("fogColor",  [map(red(BgColor),0,255,0,1.0),map(green(BgColor),0,255,0,1.0),map(blue(BgColor),0,255,0,1.0)]);
-  moveCamera(dispscale);
+  
+  player.move(dispscale, dispscale);
   
   lightFalloff(1.0, 0.0, 0.01);
   pointLight(40,40,80, 0, -10,0);
-  
+  let scaledPlayerPosition = player.position.copy().mult(dispscale);
+  let lightDirection = scaledPlayerPosition.copy().add(player.viewDirection);
   if(lightmode === 1){
     lightFalloff(1.0, 0.0, 2.5 * dispscale);
-    spotLight(150,150,140, dispscale*playerx, dispscale*playery, dispscale*playerz, dispscale*playerx + playerView.x, dispscale*playery + playerView.y, dispscale*playerz + playerView.z, radians(30), 50);
+    spotLight(150,150,140, scaledPlayerPosition.x, scaledPlayerPosition.y, scaledPlayerPosition.z, lightDirection.x, lightDirection.y, lightDirection.z, radians(30), 50);
   }else if(lightmode === 2){
     lightFalloff(1.0, 0.0, 2.0 * dispscale);
-    spotLight(150,150,140, dispscale*playerx, dispscale*playery, dispscale*playerz, dispscale*playerx + playerView.x, dispscale*playery + playerView.y, dispscale*playerz + playerView.z, radians(30), 10);
+    spotLight(150,150,140, scaledPlayerPosition.x, scaledPlayerPosition.y, scaledPlayerPosition.z, lightDirection.x, lightDirection.y, lightDirection.z, radians(30), 10);
   }
   
-  otherControls();
+  // otherControls();
   
-  currChonk = setCurrentChonk();
+  currChonk = setCurrentChonk(player);
   
   if(toggleDebug){
     currChonk.displayCurrBounding();
@@ -121,8 +121,8 @@ function draw() {
   });
   hud();
   
-  LoadChonks(currChonk, 3, nearDistance, viewAng, viewDistance);
-  unLoadChonks(nearDistance, viewAng, viewDistance);
+  loadChonks(currChonk, 3, nearDistance, viewAng, viewDistance, player);
+  unLoadChonks(nearDistance, viewAng, viewDistance, player);
   prepChonks();
   
 }

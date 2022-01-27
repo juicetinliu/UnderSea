@@ -13,12 +13,10 @@ function hud(){
     //line(width/2, height/2-5, width/2, height/2+5);
     ellipse(width/2, height/2, 10, 10);
     //TODO: HUD FILL COLOR BUG DUE TO SHADER SHADING EVERYTHING
-    if(document.isMobileOrTabletView){
-      controlStick.draw();
-    }
+    player.drawControlsHUD();
     
     if(toggleDebug){
-      rect(deltx-5, delty-5, 10, 10);
+      rect(player.controlView.deltx-5, player.controlView.delty-5, 10, 10);
     }
     
     fill(255);
@@ -28,9 +26,9 @@ function hud(){
     text("FPS: " + fps.toFixed(2), 10,10);
     
     if(!document.isMobileOrTabletView){
-      text("X: " + nfc(playerx,2), 10, 30);
-      text("Y: " + nfc(playery,2), 10, 45);
-      text("Z: " + nfc(playerz,2), 10, 60);
+      text("X: " + nfc(player.position.x, 2), 10, 30);
+      text("Y: " + nfc(player.position.y, 2), 10, 45);
+      text("Z: " + nfc(player.position.z, 2), 10, 60);
       
       if(toggleDebug){
         text(threshhold, 40, 90);
@@ -60,7 +58,7 @@ function hud(){
         text("Q/E for Threshold",width/2,height-30);
       }
 
-      if(!locked){
+      if(!player.controlView.isLocked){
         text("Click to enter", width/2, height/2+20)
       }
       

@@ -366,16 +366,16 @@ class Chonk{
   }
   
   disttochonkcenterLinXZ(x, z){
-    return dist(x,z,this.offx+(this.chonkx-1)/2,this.offz+(this.chonkz-1)/2);
+    return dist(x, z, this.offx+(this.chonkx-1)/2, this.offz+(this.chonkz-1)/2);
   }
   
   disttochonkcenterLin(x, y, z){
-    return dist(x,y,z,this.offx+(this.chonkx-1)/2,this.offy+(this.chonky-1)/2,this.offz+(this.chonkz-1)/2);
+    return dist(x, y, z, this.offx+(this.chonkx-1)/2, this.offy+(this.chonky-1)/2, this.offz+(this.chonkz-1)/2);
   }
   
-  angBetweenCenter(viewVec){
-    let chonkvec = createVector(this.offx+(this.chonkx-1)/2 - playerx, this.offy+(this.chonky-1)/2 - playery, this.offz+(this.chonkz-1)/2  - playerz);
-    return abs(viewVec.angleBetween(chonkvec));
+  angBetweenCenter(player){
+    let chonkvec = createVector(this.offx+(this.chonkx-1)/2 - player.position.x, this.offy+(this.chonky-1)/2 - player.position.y, this.offz+(this.chonkz-1)/2  - player.position.z);
+    return abs(player.viewDirection.angleBetween(chonkvec));
   }
 
   withinChonk(x, y, z){
@@ -383,23 +383,23 @@ class Chonk{
   }
 }
 
-function setCurrentChonk(){
+function setCurrentChonk(player){
   for(let l = 0; l < LoadedChonks.length; l++){
     let thisChonk = LoadedChonks[l];
-    if(thisChonk.withinChonk(playerx,playery,playerz)){
+    if(thisChonk.withinChonk(player.position.x, player.position.y, player.position.z)){
       return thisChonk;
     }
   }
   for(let l = 0; l < UnLoadedChonks.length; l++){
     let thisChonk = UnLoadedChonks[l];
-    if(thisChonk.withinChonk(playerx,playery,playerz)){
+    if(thisChonk.withinChonk(player.position.x, player.position.y, player.position.z)){
       return thisChonk;
     }
   }
   return null;
 }
 
-function LoadChonks(thisChonk, chonkDist, nearDist, viewAng, viewDist){
+function loadChonks(thisChonk, chonkDist, nearDist, viewAng, viewDist, player){
   let tx = thisChonk.offx;
   let ty = thisChonk.offy;
   let tz = thisChonk.offz;
@@ -410,28 +410,28 @@ function LoadChonks(thisChonk, chonkDist, nearDist, viewAng, viewDist){
         let ny = y*chonksy;
         let nz = z*chonksz;
         
-        let disttochonkcenter = dist(tx + nx + chonksx/2, ty + ny + chonksy/2, tz + nz + chonksz/2, playerx, playery, playerz);
+        let disttochonkcenter = dist(tx + nx + chonksx/2, ty + ny + chonksy/2, tz + nz + chonksz/2, player.position.x, player.position.y, player.position.z);
         
         if(disttochonkcenter <= nearDist){
-          if(!existsLoadedChonk(tx + nx,ty + ny,tz + nz)){
-            let unChonk = existsUnloadedChonk(tx + nx,ty + ny,tz + nz);
+          if(!existsLoadedChonk(tx + nx, ty + ny, tz + nz)){
+            let unChonk = existsUnloadedChonk(tx + nx, ty + ny, tz + nz);
             if(unChonk !== null){
               LoadedChonks.push(unChonk);
               UnLoadedChonks.splice(UnLoadedChonks.indexOf(unChonk), 1);
-            }else if(!existsBufChonk(tx + nx,ty + ny,tz + nz)){
-              ProcessBufChonks.push(new Chonk(chonkx, chonky, chonkz, threshhold, tx + nx,ty + ny,tz + nz, dispscale));
+            }else if(!existsBufChonk(tx + nx, ty + ny, tz + nz)){
+              ProcessBufChonks.push(new Chonk(chonkx, chonky, chonkz, threshhold, tx + nx, ty + ny, tz + nz, dispscale));
             }
             
           }
-        }else if(abs(playerView.angleBetween(createVector((tx + nx + chonksx/2) - playerx, (ty + ny + chonksy/2) - playery, (tz + nz + chonksz/2) - playerz))) < viewAng){
+        }else if(abs(player.viewDirection.angleBetween(createVector((tx + nx + chonksx/2) - player.position.x, (ty + ny + chonksy/2) - player.position.y, (tz + nz + chonksz/2) - player.position.z))) < viewAng){
           if(disttochonkcenter <= viewDist){
-            if(!existsLoadedChonk(tx + nx,ty + ny,tz + nz)){
-              let unChonk = existsUnloadedChonk(tx + nx,ty + ny,tz + nz);
+            if(!existsLoadedChonk(tx + nx, ty + ny, tz + nz)){
+              let unChonk = existsUnloadedChonk(tx + nx, ty + ny, tz + nz);
               if(unChonk !== null){
                 LoadedChonks.push(unChonk);
                 UnLoadedChonks.splice(UnLoadedChonks.indexOf(unChonk), 1);
-              }else if(!existsBufChonk(tx + nx,ty + ny,tz + nz)){
-                ProcessBufChonks.push(new Chonk(chonkx, chonky, chonkz, threshhold, tx + nx,ty + ny,tz + nz, dispscale));
+              }else if(!existsBufChonk(tx + nx, ty + ny, tz + nz)){
+                ProcessBufChonks.push(new Chonk(chonkx, chonky, chonkz, threshhold, tx + nx, ty + ny, tz + nz, dispscale));
               }
               
             }
@@ -479,18 +479,18 @@ function existsBufChonk(x, y, z){
 }
 
 
-function unLoadChonks(nearDist, viewAng, viewDist){
+function unLoadChonks(nearDist, viewAng, viewDist, player){
   for(let c = LoadedChonks.length - 1; c >= 0; c--){
     let thisChonk = LoadedChonks[c];
     if(thisChonk !== currChonk){
-      if(thisChonk.disttochonkcenterLin(playerx,playery,playerz) > nearDist){
-        if(thisChonk.disttochonkcenterLin(playerx,playery,playerz) <= viewDist){
-          if(thisChonk.angBetweenCenter(playerView) >= viewAng){
+      if(thisChonk.disttochonkcenterLin(player.position.x, player.position.y, player.position.z) > nearDist){
+        if(thisChonk.disttochonkcenterLin(player.position.x, player.position.y, player.position.z) <= viewDist){
+          if(thisChonk.angBetweenCenter(player) >= viewAng){
             LoadedChonks.splice(c,1);
             UnLoadedChonks.push(thisChonk);
           }
-        }else if(thisChonk.disttochonkcenterLin(playerx,playery,playerz) > viewDist){
-          LoadedChonks.splice(c,1);
+        }else if(thisChonk.disttochonkcenterLin(player.position.x, player.position.y, player.position.z) > viewDist){
+          LoadedChonks.splice(c, 1);
         }
       }     
     }
@@ -498,8 +498,8 @@ function unLoadChonks(nearDist, viewAng, viewDist){
   for(let c = UnLoadedChonks.length - 1; c >= 0; c--){
     let thisChonk = UnLoadedChonks[c];
     if(thisChonk !== currChonk){
-      if(thisChonk.disttochonkcenterLin(playerx,playery,playerz) > viewDist){
-        UnLoadedChonks.splice(c,1);
+      if(thisChonk.disttochonkcenterLin(player.position.x, player.position.y, player.position.z) > viewDist){
+        UnLoadedChonks.splice(c, 1);
       }
     }
   }
